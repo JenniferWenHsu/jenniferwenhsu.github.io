@@ -31,7 +31,10 @@
         <img src="images/mirage.jpg" width="300px" />
         <figcaption align="middle"> Mirage (Source: Wikipedia)</figcaption>
       </tr>
-
+      <tr>
+        <img src="images/Fata_Morgana.jpg" width="300px" />
+        <figcaption align="middle"> A Fata Morgana seen from the coast of Queensland, Australia(Source: Wikipedia)</figcaption>
+      </tr>
     </table>
   </div>
 <h4>Summary: </h4>
@@ -51,6 +54,14 @@ The monte carlo ray tracer built in project 3 - while certainly complex - makes 
 The challenge is twofold; the raytracer needs to be modified to handle non-linear light paths, and a scene’s atmosphere needs to be modelled in a reasonable fashion. In order to achieve this we will explore various methods to correctly approximate the light ray’s path including; modelling the atmosphere as a series of discrete slabs, modelling atmosphere as a physically accurate continuous field, and various numerical integration techniques to better calculate the light’s real path.
 </p>
 
+  <div align="center">
+    <table style="width=100%">
+      <tr>
+        <img src="images/Capture.PNG" width="300px" />
+        <figcaption align="middle"> Concept of slab implementation. (Implementation of snell's law at each slab)</figcaption>
+      </tr>
+    </table>
+  </div>
 <h4> Goals and Deliverables </h4>
 <p> 
 There are several metrics we can use to measure the quality of the image: realism, noise level and runtime. For realism and noise level, we can zoom in into a corner of the image and compare the differences to what we would expect from real life. As for runtime, we would hope our raytracer can render reasonably cool scenes in reasonable time. 
@@ -73,7 +84,7 @@ Finalize on which specific images we want to render.
 
 <h4> Resources: </h4>
 
-<a href="https://en.wikipedia.org/wiki/Mirage"> https://en.wikipedia.org/wiki/Mirage </a>
+<a href="https://en.wikipedia.org/wiki/Mirage"> Mirage Wikipedia</a>
 <a href="http://grtracer.herokuapp.com/"> http://grtracer.herokuapp.com/ </a>
 <a href="http://ieeexplore.ieee.org/document/4015408/#full-text-section"> http://ieeexplore.ieee.org/document/4015408/#full-text-section </a>
 <a href="http://www.sciencedirect.com/science/article/pii/S0097849304001967"> http://www.sciencedirect.com/science/article/pii/S0097849304001967 </a>
