@@ -2,3 +2,36 @@
 <h5>Summary: </h5>
 <p>
 Mirage and Fata Morgana are optical effects caused by light bending due to differences in air density. Our goal is to modify the ray tracing scheme from proj3-1 and proj3-2 to take into account this non-linear bending. Hopefully, the final product will be able to model a realistic atmosphere (e.g. dessert after a hot day) and correctly ray trace scenes situated in such conditions.</p>
+
+
+<h5> Team Members: </h5>
+<p> Sudeep Dasari, Jennifer Hsu </p>
+
+
+<h5> Problem Description: </h5>
+<p>
+The monte carlo ray tracer built in project 3 - while certainly complex - makes simplifying assumptions about light behavior that does not carry over into real life. Namely, the raytracer project assumes that light always travels in a straight line, which means a huge variety of real life visual effects cannot be correctly accounted for. Our goal is to build a new ray tracer that relaxes this assumption, and models realistic scenes that nicely demonstrate the newfound capability.
+</p>
+<p>
+The challenge is twofold; the raytracer needs to be modified to handle non-linear light paths, and a scene’s atmosphere needs to be modelled in a reasonable fashion. In order to achieve this we will explore various methods to correctly approximate the light ray’s path including; modelling the atmosphere as a series of discrete slabs, modelling atmosphere as a physically accurate continuous field, and various numerical integration techniques to better calculate the light’s real path.
+</p>
+
+<h5> Goals and Deliverables </h5>
+<p> 
+There are several metrics we can use to measure the quality of the image: realism, noise level and runtime. For realism and noise level, we can zoom in into a corner of the image and compare the differences to what we would expect from real life. As for runtime, we would hope our raytracer can render reasonably cool scenes in reasonable time. 
+</p>
+<p>
+Each atmospheric effect holds different characteristics/parameters that can be varied to produce various results for comparison. Some examples include placing heat sources and heat sinks in an image prior to rendering. 
+</p>
+
+<h5>Schedule: </h5>
+<p> 
+Week 1: 
+Research on modeling atmospheric structures. 
+Come up with general implementation structure. 
+Write some proof-of-concepts programs.  
+Finalize on which specific images we want to render. 
+<br> Week 2: Implementation & rendering 
+<br> Week 3: Implementation & rendering. Come up with ideas on how to present the final project. 
+<br> Week 4: Work on aspirational topic. Wrap up for final project. (Write-up) 
+</p>
