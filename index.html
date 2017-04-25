@@ -15,79 +15,86 @@
     font-family: 'Source Sans Pro', sans-serif;
   }
 </style>
-<title>CS 184 Ray Tracer, Part 1</title>
+<title>CS 184 Mesh Editor</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 </head>
 
+
 <body>
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
-<h1 align="middle">Final Project Proposal: Mirage and Fata Morgana</h1>
-
-  <div align="center">
-    <table style="width=100%">
-      <tr>
-        <img src="images/mirage.jpg" width="300px" />
-        <figcaption align="middle"> Mirage (Source: Wikipedia)</figcaption>
-      </tr>
-      <tr>
-        <img src="images/Fata_Morgana.jpg" width="300px" />
-        <figcaption align="middle"> A Fata Morgana seen from the coast of Queensland, Australia(Source: Wikipedia)</figcaption>
-      </tr>
-    </table>
-  </div>
-<h4>Summary: </h4>
-<p>
-Mirage and Fata Morgana are optical effects caused by light bending due to differences in air density. Our goal is to modify the ray tracing scheme from proj3-1 and proj3-2 to take into account this non-linear bending. Hopefully, the final product will be able to model a realistic atmosphere (e.g. dessert after a hot day) and correctly ray trace scenes situated in such conditions.</p>
+<h1 align="middle">Final Project Milestone Status Report</h1>
+<h2 align="middle">Sudeep Dasari, CS184-adw <br> Jennifer Hsu, CS184-abn</h2>
 
 
-<h4> Team Members: </h4>
-<p> Sudeep Dasari, Jennifer Hsu </p>
+<br><br>
 
+<div>
 
-<h4> Problem Description: </h4>
-<p>
-The monte carlo ray tracer built in project 3 - while certainly complex - makes simplifying assumptions about light behavior that does not carry over into real life. Namely, the raytracer project assumes that light always travels in a straight line, which means a huge variety of real life visual effects cannot be correctly accounted for. Our goal is to build a new ray tracer that relaxes this assumption, and models realistic scenes that nicely demonstrate the newfound capability.
-</p>
-<p>
-The challenge is twofold; the raytracer needs to be modified to handle non-linear light paths, and a scene’s atmosphere needs to be modelled in a reasonable fashion. In order to achieve this we will explore various methods to correctly approximate the light ray’s path including; modelling the atmosphere as a series of discrete slabs, modelling atmosphere as a physically accurate continuous field, and various numerical integration techniques to better calculate the light’s real path.
-</p>
+<h2 align="middle"> Part I: Implementation of two atmospheric models </h2>
+  <h3> 1st Model: Index of Refraction changing linearly with height. </h3>
+    <p> Given the maximum and minimum index of refraction and returns a index of refraction through linear interpolation. </p>
+  <h3> 2nd Model: Ground as heat source </h3>
+    <p> Treating the ground as a heat source so index of refraction starts at a value determined by temperature of source and converges exponentially to that of air as distance from ground increases.</p>
+    <br> <br> 
 
-  <div align="center">
-    <table style="width=100%">
-      <tr>
-        <img src="images/Capture.PNG" width="300px" />
-        <figcaption align="middle"> Concept of slab implementation. (Implementation of snell's law at each slab)</figcaption>
+<h2 align="middle"> Part II: Implementation of Non-Linear Raytracing using Slab Method</h2>
+  <p> Given information of the incoming ray (including both origin and direction), we can determine the intersection of the ray and the slab and the refractive direction using Snell's Law. </p>
+    <img src="images/slabinstruction.png" width="500px" align="middle" />
+    <figcaption align="middle">Diagram of Raytracing using Slab Method</figcaption>
+  <h3> Constant Index of Refraction </h3>
+      <table style="width=100%">
+        <tr>
+        <td align="middle">
+        <img src="images/5000_1.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 10</figcaption>
+
+        <td align="middle">
+        <img src="images/5000_2.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 100</figcaption>
+ 
+        <td align="middle">
+        <img src="images/5000_3.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 700</figcaption>
       </tr>
     </table>
-  </div>
-<h4> Goals and Deliverables </h4>
-<p> 
-There are several metrics we can use to measure the quality of the image: realism, noise level and runtime. For realism and noise level, we can zoom in into a corner of the image and compare the differences to what we would expect from real life. As for runtime, we would hope our raytracer can render reasonably cool scenes in reasonable time. 
-</p>
-<p>
-Each atmospheric effect holds different characteristics/parameters that can be varied to produce various results for comparison. Some examples include placing heat sources and heat sinks in an image prior to rendering. 
-</p>
+  <h3> Increasing Index of Refraction </h3>
+        <table style="width=100%">
+        <tr>
+        <td align="middle">
+        <img src="images/5000_1.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 10</figcaption>
 
-<h4>Schedule: </h4>
-<p> 
-Week 1: 
-Research on modeling atmospheric structures. 
-Come up with general implementation structure. 
-Write some proof-of-concepts programs.  
-Finalize on which specific images we want to render. 
-<br> Week 2: Implementation & rendering 
-<br> Week 3: Implementation & rendering. Come up with ideas on how to present the final project. 
-<br> Week 4: Work on aspirational topic. Wrap up for final project. (Write-up) 
-</p>
+        <td align="middle">
+        <img src="images/5000_2.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 100</figcaption>
+ 
+        <td align="middle">
+        <img src="images/5000_3.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 700</figcaption>
+      </tr>
+    </table>
+  <h3> Decreasing Index of Refraction </h3>
+        <table style="width=100%">
+        <tr>
+        <td align="middle">
+        <img src="images/5000_1.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 10</figcaption>
 
-<h4> Resources: </h4>
+        <td align="middle">
+        <img src="images/5000_2.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 100</figcaption>
+ 
+        <td align="middle">
+        <img src="images/5000_3.PNG" width="300px" />
+        <figcaption align="middle"> Slab Count: 700</figcaption>
+      </tr>
+    </table>
 
-<a href="https://en.wikipedia.org/wiki/Mirage"> Mirage Wikipedia</a>
-<a href="http://grtracer.herokuapp.com/"> http://grtracer.herokuapp.com/ </a>
-<a href="http://ieeexplore.ieee.org/document/4015408/#full-text-section"> http://ieeexplore.ieee.org/document/4015408/#full-text-section </a>
-<a href="http://www.sciencedirect.com/science/article/pii/S0097849304001967"> http://www.sciencedirect.com/science/article/pii/S0097849304001967 </a>
 
+<a href="">Milestone Video</a>
+<br> 
+<a href="https://docs.google.com/a/berkeley.edu/presentation/d/1DZWjTugHMejenjGKO1fG3UBtJUfPZmdph4qSLC1bUk0/edit?usp=sharing"> Presentation Slides </a>
 </body>
 </html>
