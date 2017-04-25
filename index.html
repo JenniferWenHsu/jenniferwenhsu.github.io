@@ -15,7 +15,7 @@
     font-family: 'Source Sans Pro', sans-serif;
   }
 </style>
-<title>CS 184 Mesh Editor</title>
+<title>CS 184 </title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 </head>
@@ -40,58 +40,64 @@
     <br> <br> 
 
 <h2 align="middle"> Part II: Implementation of Non-Linear Raytracing using Slab Method</h2>
+  <p> Models atmosphere as slabs of air. Each slab has a different index of refraction, but all air inside the same slab is assumed to have the same index of refraction. Clearly not 100% accurate but can be good enough for certain scenes, depending on how many slabs are chosen.</p>
   <p> Given information of the incoming ray (including both origin and direction), we can determine the intersection of the ray and the slab and the refractive direction using Snell's Law. </p>
-    <img src="images/slabinstruction.png" width="500px" align="middle" />
-    <figcaption align="middle">Diagram of Raytracing using Slab Method</figcaption>
-  <h3> Constant Index of Refraction </h3>
-      <table style="width=100%">
+        <table style="width=100%">
         <tr>
         <td align="middle">
-        <img src="images/5000_1.PNG" width="300px" />
+        <img src="images/slabinstruction.png" width="450px" />
+        <figcaption align="middle"> Slab Method </figcaption>
+      </tr>
+    </table>
+  <h3> Constant Index of Refraction </h3>
+        <table style="width=100%">
+        <tr>
+        <td align="middle">
+        <img src="images/int_test_index_1_1slab.png" width="300px" />
         <figcaption align="middle"> Slab Count: 10</figcaption>
 
         <td align="middle">
-        <img src="images/5000_2.PNG" width="300px" />
+        <img src="images/int_test_index_1_100slabs.png" width="300px" />
         <figcaption align="middle"> Slab Count: 100</figcaption>
  
-        <td align="middle">
-        <img src="images/5000_3.PNG" width="300px" />
-        <figcaption align="middle"> Slab Count: 700</figcaption>
       </tr>
     </table>
+    <p>Theoretically these should be showing the same image. However, we have found that with the increase of the number of slabs, the dimmer the image seems to be. This is an artifact that we need to fix. It could easily have something to do with floating point error.</p>
   <h3> Increasing Index of Refraction </h3>
         <table style="width=100%">
         <tr>
         <td align="middle">
-        <img src="images/5000_1.PNG" width="300px" />
+        <img src="images/10slabs_increasing.png" width="300px" />
         <figcaption align="middle"> Slab Count: 10</figcaption>
 
         <td align="middle">
-        <img src="images/5000_2.PNG" width="300px" />
+        <img src="images/100slabs_increasing.png" width="300px" />
         <figcaption align="middle"> Slab Count: 100</figcaption>
  
         <td align="middle">
-        <img src="images/5000_3.PNG" width="300px" />
+        <img src="images/700slabs_increasing.png" width="300px" />
         <figcaption align="middle"> Slab Count: 700</figcaption>
       </tr>
     </table>
+    <p> These images are rendered using an atmosphere with linearly changing index of refraction. At the bottom of the scene the refraction index is 1 and at the top it is 1.01. This change is actually higher than you would expect in real life situations, but it provides a useful demonstration. Note how the number of artifacts drastically decreases as the number of slabs is increased. Our goal is to quantify how realistic these images are and the amount of artifacts in them, and try and decrease that error as much as possible in the coming week.</p>
   <h3> Decreasing Index of Refraction </h3>
         <table style="width=100%">
         <tr>
         <td align="middle">
-        <img src="images/5000_1.PNG" width="300px" />
+        <img src="images/10slabs_decreasing.png" width="300px" />
         <figcaption align="middle"> Slab Count: 10</figcaption>
 
         <td align="middle">
-        <img src="images/5000_2.PNG" width="300px" />
+        <img src="images/100slabs_decreasing.png" width="300px" />
         <figcaption align="middle"> Slab Count: 100</figcaption>
  
         <td align="middle">
-        <img src="images/5000_3.PNG" width="300px" />
+        <img src="images/700slabs_decreasing.png" width="300px" />
         <figcaption align="middle"> Slab Count: 700</figcaption>
       </tr>
     </table>
 
+        <p>These images are rendered using an atmosphere with linearly changing index of refraction. At the bottom of the scene the refraction index is 1.01 and at the top it is 1. This change is actually higher than you would expect in real life situations, but it provides a useful demonstration. Note how the number of artifacts drastically decreases as the number of slabs is increased. Our goal is to quantify how realistic these images are and the amount of artifacts in them, and try and decrease that error as much as possible in the coming week.</p>
 
 <a href="">Milestone Video</a>
 <br> 
