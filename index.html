@@ -45,6 +45,14 @@ figure figcaption {
 
 
 <br><br>
+
+<h2> Abstract</h2>
+<h2> Technical Approach </h2>
+<h2> Results</h2> 
+<h2> References</h2>
+<h2> Contributions from each team member</h2>
+	<h5> Sudeep Dasari (CS184-adw)</h5>
+	<h5> Jennifer Wen Hsu (CS184-abn)</h5> 
 <h2> Overview</h2>
 
 <p> In project 3, we wrote a ray-tracing algorithm assuming that light travels in a straight line. However, there are cases where a light takes on a curved path. For example, on a hot summer day, the ground holds a higher temperature than the air, resulting a lower index of refraction. (Higher temperature infers less air density. The lower the density, the faster light travels, and according to snells law, it has a smaller index of refraction ) This phenomenon is called Mirage. In the case when the air has a smaller index of refraction, we call it Fata Morgana. </p> 
@@ -195,7 +203,39 @@ figure figcaption {
 
 	<p>Instead, we can use lenses whose index of refraction changes throughout the material. This way, we can create flat lenses and/or lenses without abberations. In thoery, the human eye also has varying index of refraction. </p>
 
-	<p> </p>
+
+	<h4> GRIN Lens Specifics</h4> 
+		<ul>
+		  <li> Index of Refraction: $N = N_0[1-(k/2)r^2]$</li>
+		  <li> Focal Length: $f = \frac{1}{N_0 \sqrt{k} sin(t \sqrt{k})}$</li>
+		  <li> Back Focal Length: $bfl = fcos(t \sqrt{k})$</li>
+		  <li> $N_0$ is base index of refraction, $k$ is gradient constant, and $t$ is lens length
+		</ul>
+		<p>Source for all equations is International Society for Optics and Photonics <br> (Read more at: https://spie.org/publications/tt48_55_gradient_index_lens)</p>
+	
+	<h4> Ray Tracing From Sensor Plane to World </h4>
+		<table style="width=100%">
+			   <tr>
+		        <td align="middle">
+		        <img src="images/diag1.png" width="300px" />
+		        <figcaption align="middle"> Focused 17.2 Units Away </figcaption>
+		        <td align="middle">
+		        <img src="images/diag2.png" width="300px" />
+		        <figcaption align="middle"> Focused 4.2 Units Away </figcaption>
+		       </tr>
+		       <tr>
+		        <td align="middle">
+		        <img src="images/diag3.png" width="300px" />
+		        <figcaption align="middle"> Focused 17.2 Units Away </figcaption>
+		        <td align="middle">
+		        <img src="images/diag4.png" width="300px" />
+		        <figcaption align="middle"> Focused 4.2 Units Away</figcaption>
+		      </tr>
+		</table> 
+
+	<br> <br> 
+	<h4> Some rendered images </h4> 
+
 			<table style="width=100%">
 			   <tr>
 		        <td align="middle">
