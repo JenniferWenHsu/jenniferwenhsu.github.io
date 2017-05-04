@@ -169,14 +169,22 @@ figure figcaption {
 		<h5> Method 3: Euler Ray Tracing</h5>
 		<p> In the previous two slab methods, we assume that index of refraction stays constant in points with the same height, however, more complex scenes will require us to relax that assumption. We solve the general case using general equation based on Fermat's principles.</p>
 
-		$$\frac{d}{dl}(n\frac{d \vec{r}}{dl}) - \nabla n = 0 \leftrightarrow 
-		\frac{d}{dl}(n\frac{dx_j}{dl}) - \frac{\partial n}{\partial x_j} = 0 \quad \quad \text{    Source: F.J. Seron et. al. }
-		$$
+		<table style="width=100%">
+			   <tr>
+		        <td align="middle">
+		        <img src="images/eq1.PNG" width="300px" />
+		        <figcaption align="middle"> Source: F. J. Seron et. al. </figcaption>
+		      </tr>
+		</table> 
 
 		<p> To solve discretize equation and Euler's method to estimate path. </p>
-
-		$$\frac{dx_{ji+i}}{dl} = \frac{n_i(dx_{ji}/dl) + (\partial n / \partial x_j) \delta l_i}{n_{i+1}}  \quad \quad \text{Source: F. J. Seron et. al. }
-		$$
+		<table style="width=100%">
+			   <tr>
+		        <td align="middle">
+		        <img src="images/eq2.PNG" width="300px" />
+		        <figcaption align="middle"> Source: F. J. Seron et. al. </figcaption>
+		      </tr>
+		</table> 
 
 	<h4> Part 2: Modeling Heat Source</h4>
 	<p> In a more complicated scene, the heat source might be more than just the entire floor. Using the previous example, only the red shaded area of the scene has a relatively higher temperature than the rest. 
