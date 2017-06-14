@@ -1,57 +1,141 @@
-<html>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-  <link rel="stylesheet" href="https://pingendo.github.io/templates/blank/theme.css" type="text/css"> </head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
 
+ figure {
+    display: inline-block;
+    margin: 20px; /* adjust as needed */
+}
+figure img {
+    vertical-align: top;
+}
+figure figcaption {
+    text-align: center;
+}
+</style>
+<title>Jennifer Hsu</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 <body>
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <h1 class="">Heading</h1>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <img class="img-fluid d-block" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg">
-        </div>
-        <div class="col-md-4">
-          <img class="img-fluid d-block" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg">
-        </div>
-        <div class="col-md-4">
-          <img class="img-fluid d-block" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <p class="lead">Lead paragraph </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <p class="">Paragraph</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
-  <script src="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-alpha.6.min.js"></script>
-</body>
 
-</html>
+<h1 align="middle">PEACEMEAL</h1>
+<h2 align="middle">Group Members: Jennifer Hsu, Chonyi Lama, Akkshay Khoslaa, Mukunda Satchidanand</h2>
+
+<a href="https://youtu.be/mQDdSupyKMI"> Demo Video </a>
+<p>For people with dietary restrictions, eating out has always been a really difficult task. They have difficulty finding meals they can eat, and places where those meals are served. To solve this problem, we created PeaceMeal, which allows users to find meals that they can eat at nearby restaurants, and then locate those restaurants.</p>
+
+<h3> Design Sketches, Variations, and Ideas </h3>
+<p>We had several different looks for the filter selection page, at the time we drew the sketches. We also sketched an idea for the watch, at this point - displaying pictures of the dish that was pulled up on the phone.</p>
+    <table style="width=100%">
+            <tr>
+            <td>
+            <figure> 
+            <img src="images/Figure1.PNG" width="300px" />
+            <figcaption align="middle"> </figcaption>
+            </figure>
+          </tr>
+    </table>
+
+<h3> Selection Screen </h3>
+<p>First time users will be taken to this screen to select their dietary restrictions and preferences. 
+Initially, all the food types will be selected. Users can un-select single food type or an entire category. 
+After selecting, users will tap on the “Complete” button to get to the Dish Feed Screen.
+Users can always come back to this screen to edit, however, this screen will not pop up after first used. This is because one’s dietary restrictions or preferences do not change too often.</p>
+    <table style="width=100%">
+            <tr>
+            <td>
+            <figure> 
+            <img src="images/Figure2.PNG" width="300px" />
+            <figcaption align="middle"> </figcaption>
+            </figure>
+          </tr>
+    </table>
+
+<h3> Dish Feed Screen </h3>
+<p>On this screen, users can see a list of dishes that meets their dietary restrictions from nearby places ranked from the closest to the furthest. 
+<br> For each card, there are four pieces of information: 
+<br> Image of the dish 
+<br> Name of the dish 
+<br> Rating 
+<br> Restaurant</p>
+    <table style="width=100%">
+            <tr>
+            <td>
+            <figure> 
+            <img src="images/Figure3.PNG" width="300px" />
+            <figcaption align="middle"> </figcaption>
+            </figure>
+          </tr>
+    </table>
+
+<h3> Detailed Dish Screen </h3>
+<p>Detailed information about the dish are listed on this screen. Information include: 
+<br> Name of the dish 
+<br> Rating
+<br> Restaurant Name
+<br> Restaurant Address
+<br> Price
+<br> Ingredients
+<br> Dish Description (If provided) 
+<br> Navigation button 
+<br> The navigation button on the top right starts the Google map and navigates to the restaurant.</p>
+    <table style="width=100%">
+            <tr>
+            <td>
+            <figure> 
+            <img src="images/Figure4.PNG" width="300px" />
+            <figcaption align="middle"> </figcaption>
+            </figure>
+          </tr>
+    </table>
+
+<h3> Google Map Navigation </h3>
+<p>
+  When the user tap on the navigation button, the app takes them to the Google Map application and navigates them to the restaurant that contains that meal
+</p>
+
+    <table style="width=100%">
+            <tr>
+            <td>
+            <figure> 
+            <img src="images/Figure5.PNG" width="300px" />
+            <figcaption align="middle"> </figcaption>
+            </figure>
+          </tr>
+    </table>
+
+<h3> Dish Feed Screen </h3>
+<p>
+Once the user filter out their dietary restrictions, the watch refreshes to show a feed of all the dishes that are available nearby.
+</p>
+
+    <table style="width=100%">
+            <tr>
+            <td>
+            <figure> 
+            <img src="images/Figure6.PNG" width="300px" />
+            <figcaption align="middle"> </figcaption>
+            </figure>
+          </tr>
+    </table>
