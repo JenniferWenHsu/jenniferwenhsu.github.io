@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>  
+    div.padded {  
+      padding-top: 0px;  
+      padding-right: 100px;  
+      padding-bottom: 0.25in;  
+      padding-left: 100px;  
+    }  
+  </style> 
+<title>Jennifer Wen Hsu  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+<br />
+<h1 align="middle">Assignment 3: PathTracer</h1>
+    <h2 align="middle">Jennifer Wen Hsu</h2>
+
+    <div class="padded">
+    <p>
+    Overview: There are 5 parts to this project: 
+    <h5>Part 1: Ray Generation and Intersection</h5>
+        <p>Shooting rays from the camera and find the intersection points for triangles and spheres. </p>
+    <h5>Part 2: Bounding Volume Hierarchy </h5>
+        <p>Because testing ray and primitive intersection requires too much computation, we can limit the number of calculation by implementing a Bounding Volume Hierarchy. </p>
+    <h5>Part 3: Direct Illumination </h5>
+        <p>Estimates the direct lighting at a point after ray hits.</p>
+    <h5>Part 4: Indirect Illumniation</h5>
+        <p>Estimates the indirect lighting at a point after ray hits.</p>
+    <h5>Part 5: Adaptive Sampling </h5>
+        <p>The big idea is that we don't usually need to sample uniformly for all pixels because some pixels converge faster than others. We can utilize this property and apply adaptive sampling to lower the number of samples.</p>
+    </p>
+
+    <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
+        <p> There are 4 tasks in Part 1.</p>
+        <h4> Task 1: Filling in the sample loop </h4>
+        <p> In <i>PathTracer::raytrace_pixel(size_t x, size_t y)</i>, generate camera rays for each pixel. The <i>x</i> and <i>y</i> passed into function are the bottom left corner of the pixel. Depending on the number of samples that we want to smaple, we iterate through <i>num_samples</i>, evaluate the radiance for each sample and sum them up in the end. </p>
+        <h4> Task 2: Generating camera rays </h4>
+        <p> In <i>Camera:generate_ray()</i>, generate rays in the camera space. </p>
+        <h4> Task 3: Intersecting Triangles </h4>
+        <p>In <i> Triangle::intersect()</i>, calculate whether a ray is intersecting with a triangle and initialize the intersection. Each intersection object has 4 attributes that needs to be updated here. Those include <i>t</i>, <i>normal</i>, <i>primitive</i>, and <i>bsdf</i>. <i>t</i> and <i>bsdf</i> are pretty intuitive. The <i>normal</i> attribute is calculated through the barycentric of the normals of the triangles around the current triangle. <i>primitive</i> is used to store the primitive object that the ray is intersecting with, in this case, it is the triangle itself. </p>
+        <h4> Task 4: Intersecting Spheres </h4>
+        <p> In <i>Sphere::intersect(const Ray& r)</i>, I calculate the intersection of the ray pased in with the current sphere if there exist an intersection. A helper function <i>Sphere::test()</i> is implemented to test the existence of an intersection. Here, I mainly use b^2-4*a*c to check for a valid intersections (There are three possible cases: no intersection, one intersection, and two intersections). </p>
+
+
+        <p>Included in the following are some sipmle <i>dae</i> files. These are files that do not require a BVH structure for it to render faster because the small number of primitives. </p>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/simple_sphere.png" width="480px" />
+                    <figcaption align="middle">Rendered with the following parameters: <i>-t 8 -s 64 -l 32 -m 6 -r 480 360</i></figcaption>
+                </tr>
+            </table>
+        </div>
+
+
+
+
+    <h2 align="middle"> Part 2: Bounding Volume Hierarchy</h2>
+        <p>There are 3 tasks for part 2</p>
+        <h4>Task 1: Constructing the BVH</h4>
+        <p> After the implementation from part 1, we are traversing through every single mesh, which is really inefficient when rendering images with lots of meshes. The idea is to create a BVH (Bounding Volume Hierarcy) to decrease the number of meshes that we need to check that intersects with a ray. Initially, I tried to implement the BVH structure according to the dimension of the box, cutting the longest axis in half. However, I realized afterwards that this might not be the best approach because it's possible that all the meshes are crowded at one side of the box. </p>
+        <p>In the end, I decided to split primitives according to centroids, that way, is is more likely each children of a box has equal numbers of primitives. </p>
+        <p>The trickest part in implementing this is the edge case when all primitives are classied to the same children, leaving the other children with zero primitives. A termination is needed to make sure that this function doesn't go in a loop.</p>
+
+        <h4>Task 2: Intersecting BBox </h4>
+        <p>Bbox stands for bounding box. On a fundamental level, we want to be able to calculate the intersection of a ray with a bounding box. This will be used for <i>BVHAccel::intersect()</i> in task 3.</p>
+        <h4>Task 3: Intersecting BVHAccel </h4>
+        <p>After constructing the BVH structure, the next step is to implement <i>BVHAccel::intersect()</i> in order to calculate the intersections of the ray and primitives.</p>
+
+        <p>Included in the following are some <i>dae</i> files with greater number of meshes. </p>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_64_32.png" width="480px" />
+                    <figcaption align="middle">Dragon with 105120 primitives. </i></figcaption>
+                </tr>
+            </table>
+        </div>
+
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/big_bunny.png" width="480px" />
+                    <figcaption align="middle">Rabit with 33696 primitives. </i></figcaption>
+                </tr>
+            </table>
+        </div>
+
+    <h2 align="middle"> Part 3: Direct Illumination</h2>
+        <h4>Task 1: Diffuse BSDF</h4>
+        <p> In this project, we are only implementing diffuse BSDF. There are two functions that needed to be implemented: <i> DiffuseBSDF::f</i> and <i>DiffuseBSDF::sample_f</i> </p>
+        <h4>Task 2: Direct lighting </h4>
+        <p>On a higher level, the function <i>estimate_direct_lighting</i> estimates the direct lighting at a point after ray hits. The first step is to traverse through all the light sources in a scene, take samples from the surface of each light, compute the corresponding incoming radiance from those sampled directions, and lastly calculate the outgoing radiance according to the material's BSDF.</p>
+
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres_1_1.png" width="480px" />
+                    <figcaption align="middle">Rendering with 1 light rays and 1 sample per pixel </i></figcaption>
+                </tr>
+            </table>
+        </div>
+
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres_1_4.png" width="480px" />
+                    <figcaption align="middle">Rendering with 4 light rays and 1 sample per pixel </i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres_1_16.png" width="480px" />
+                    <figcaption align="middle">Rendering with 16 light rays and 1 sample per pixel </i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/spheres_1_64.png" width="480px" />
+                    <figcaption align="middle">Rendering with 64 light rays and 1 sample per pixel </i></figcaption>
+                </tr>
+            </table>
+        </div>
+
+        <p>The top surface of the spheres are having less and less noise as the number of light rays goes up. The finaly image still looks like it contains a lot of noise, this is because the image is rendered with 1 sample per pixel. </p>
+
+    <h2 align="middle"> Part 4: Indirect Illumination </h2>
+    <h5>Walk through of implementation of the indirect lighting function</h5>
+    <p>The function <i>estimate_indirect_lighting</i> estimates the indirect lighting at a point after a ray hit. To implement this, I take a sample from the BSDF of the hit point and trace that direction. </p>
+
+    <p>Some implementation details: I'm multiplying illum() by 10 and add it a constant 0.05 so that it doesn't terminate too early and result in high noise. </p>
+
+    <h5>Pick one scene and compare rendered views first with only direct illumination, then only indirect illumination. </h5>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/both_spheres.png" width="480px" />
+                    <figcaption align="middle">Spheres with both direct lighting and indirect lighting. </i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/only_direct_spheres.png" width="480px" />
+                    <figcaption align="middle">Spheres with only direct lighting</i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/only_indirect_spheres.png" width="480px" />
+                    <figcaption align="middle">Spheres with only indirect lighting</i></figcaption>
+                </tr>
+            </table>
+        </div>
+
+        <h5>For CBbunny.dae, compare rendered views with max_ray_depth equal to 0, 1,2, 3, and 100 (the -m flag)</h5>
+
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/bunny_0.png" width="480px" />
+                    <figcaption align="middle">Bunny with max_ray_depth = 0</i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/bunny_1.png" width="480px" />
+                    <figcaption align="middle">Bunny with max_ray_depth = 1</i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/bunny_2.png" width="480px" />
+                    <figcaption align="middle">Bunny with max_ray_depth = 2</i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/bunny_3.png" width="480px" />
+                    <figcaption align="middle">Bunny with max_ray_depth = 3</i></figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/bunny_100.png" width="480px" />
+                    <figcaption align="middle">Bunny with max_ray_depth = 100</i></figcaption>
+                </tr>
+            </table>
+        </div>
+
+        <p><i>max_ray_depth</i> decides the number of light bounces, hence for max_ray_depth = 0, 1, 2, 3, there is an obvious light up of the scene. However, because the energy of each light ray drops with each bounce, there are no obvious difference between images with <i>max_ray_depth=3</i> and <i>max_ray_depth = 100</i></p>
+        <h5>Pick one scene and compare rendered views with various sample-per-pixel rates, inluding at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays. </h5>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_1_4.png" width="480px" />
+                    <figcaption align="middle">Rate: 1 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_1_4.png" width="480px" />
+                    <figcaption align="middle">Rate: 1 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+                <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_2_4.png" width="480px" />
+                    <figcaption align="middle">Rate: 2 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+                <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_4_4.png" width="480px" />
+                    <figcaption align="middle">Rate: 4 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+                <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_8_4.png" width="480px" />
+                    <figcaption align="middle">Rate: 8 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+                <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_16_4.png" width="480px" />
+                    <figcaption align="middle">Rate: 16 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_64_4.png" width="480px" />
+                    <figcaption align="middle">Rate: 64 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/dragon_1024_new.png" width="480px" />
+                    <figcaption align="middle">Rate: 1024 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+        <p>Images with higher sample-per-pixel rate have higher resolutions. In the case of the last image with 1024 sample-per-pixel, I think it's because it was ran with only a small number of lightrays.</p>
+
+    <h2 align="middle"> Part 5: Adaptive Sampling</h2>
+        <h5>Walk through the implementation of the adaptive sampling</h5>
+        <p>The big idea is that we don't usually need to sample uniformly for all pixels, with some pixels converging faster than others. </p>
+
+        <p>First, we need find a condition for the pixel to converge and stop tracing more rays. To implement this, I first find the mean <i>mu</i> and standard deviation <i>sigma</i>of the traced n samples through a pixel, and use this found standard deviation to calculate I. I = 1.96*sigma/sqrt(n). If <i>I <= maxTolerance*mu</i> with <i>maxTolerance = 0.05</i>, then we know that the pixel has already converged and we can stop tracing more rays. </p>
+        
+        <h5>A scene rendered with the maximum numer of samples per pixel at least 2048. 1 sample per light and at least 5 for max ray depth. </h5>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/2048_4_dragon.png" width="480px" />
+                    <figcaption align="middle">Rate: 2048 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/2048_4_dragon.png" width="480px" />
+                    <figcaption align="middle">Rate: 2048 sample-per-pixel</figcaption>
+                </tr>
+            </table>
+        </div>
+</div>
+</body>
+</html>
+
+
+
+

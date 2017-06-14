@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184 Mesh Editor</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
+<h1 align="middle">Project 4: Cloth Simulator</h1>
+<h2 align="middle">Jennifer Hsu, CS184-abn</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p> Project 4 is composed of 4 parts: </p>
+<h4> Part I: Masses and Springs</h4>
+	<p> Model cloth with masses and springs. Masses are distributed evenly on a grid. Three types of strings are created: Structural, Shearing and Bending.</p>
+<h4> Part II: Simulation via numerical integration</h4>
+	<p> Apply forces to the masses of the cloth. Ex: gravity</p>
+<h4> Part III: Handling collisions with other objects</h4>
+	<p> Compute the intersection of a cloth and sphere. When a point is in a sphere, we correct the mass position to the surface of the sphere. The same logic is applied to the collision of a cloth and a plane. </p>
+<h4> Part IV: Handling self-collisions</h4>
+	<p> When a cloth falls freely, there are collisions between the cloth's masses. To minimalize the amount of computation, it is easier to store point masses in small boxes and only calculate possible collisions within the small box. </p>
+	<p> </p>
+<h2 align="middle">Part I: Masses and springs</h2>
+	<p> Model a piece of cloth with evenly distributed masses and 3 different type of springs connecting them. The three types of springs are structural, shearing and bending. </p>
+	<p>Structurla: between a point mass and the point mass to its left and point mass to above it. 
+	<br> Shearing: between a point mass and the point mass to its diagonal upper left and point mass to its diagonal upper right. 
+	<br> Bending: between a point mass and the point mass two away to its right and the point mass above it. 
+	</p>
+
+	<h4> Wireframe of a cloth. </h4>
+	 <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/no_shearing.PNG" width="350px" />
+        <figcaption align="middle">Without any shearing constraints</figcaption>
+      
+        <td align="middle">
+        <img src="images/yes_shearing.PNG" width="365px" />
+        <figcaption align="middle">With only shearing constraints</figcaption>
+      
+        <td align="middle">
+        <img src="images/everything.PNG" width="345px" />
+        <figcaption align="middle">With all constraints</figcaption>
+      </tr>
+    </table>
+  </div>
+
+<h2 align="middle">Part II: Simulation via numerical integration</h2>
+	<p> The idea is to apply forces (characterised by acceleration) to each point mass. The forces include gravity and forces from the spring(characterised by ks) </p>
+	<h3> Default </h3>
+	<h4> Animation of cloth falling forwith two corners pinned. (default ks: 5000)</h4>
+	 <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/5000_1.PNG" width="480px" />
+        <figcaption align="middle"></figcaption>
+
+        <td align="middle">
+        <img src="images/5000_2.PNG" width="480px" />
+        <figcaption align="middle"></figcaption>
+ 
+        <td align="middle">
+        <img src="images/5000_3.PNG" width="440px" />
+        <figcaption align="middle"></figcaption>
+      </tr>
+    </table>
+  </div>
+  	<h3> Effect on cloth with change of ks. </h3>
+  		<p> ks is the spring constant. According to Hooke's Law: F = -kx. Under the condition that the displacement is the same, the larger the spring constant(ks), the larger the force the spring is pulling on the masses. </p>
+	<h4> Animation of cloth falling with two corners pinned. (ks: 500)</h4>
+		<p> We can see that the cloth with a higher ks has more wrinkles compare to the cloth that has a lower ks. </p>
+
+	 <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/500_1.PNG" width="485px" />
+        <figcaption align="middle"></figcaption>
+
+        <td align="middle">
+        <img src="images/500_2.PNG" width="440px" />
+        <figcaption align="middle"></figcaption>
+ 
+        <td align="middle">
+        <img src="images/500_3.PNG" width="420px" />
+        <figcaption align="middle"></figcaption>
+      </tr>
+    </table>
+  </div>
+  <h3> Effect on cloth with change of density. </h3>
+  	<p> The higher the density, the stronger the springs pull on the masses. </p>
+  <h4> Cloth with different density: 5, 15, 50</h4>
+	 <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/cloth_density_5.PNG" width="350px" />
+        <figcaption align="middle">Density: 5</figcaption>
+
+        <td align="middle">
+        <img src="images/cloth_density_15.PNG" width="380px" />
+        <figcaption align="middle">Density: 15</figcaption>
+ 
+        <td align="middle">
+        <img src="images/cloth_density_50.PNG" width="354px" />
+        <figcaption align="middle">Density: 50</figcaption>
+      </tr>
+    </table>
+  </div>  
+
+  <h3> Effect on cloth with change of dampling. </h3>
+  <p> Dampling reflects how much the positions of the masses should be corrected. </p>
+    <h4> Cloth with different dampling</h4>
+
+	 <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/cloth_dampling_0.PNG" width="350px" />
+        <figcaption align="middle">Dampling: 0.0 <br> With no dampling, the cloth continues to ripple after a long period of time. </figcaption>
+  
+        <td align="middle">
+        <img src="images/cloth_dampling_0_2.PNG" width="300px" />
+        <figcaption align="middle">Dampling: 0.2 <br> With 0.2 dampling, the cloth still ripples, but eventually comes to a stop. </figcaption>
+
+        <td align="middle">
+        <img src="images/cloth_dampling_1.PNG" width="425px" />
+        <figcaption align="middle">Dampling: 1 <br> With 1 dampling, the cloth stops moving when the lower two corners reach the bottom</figcaption>
+      </tr>
+    </table>
+
+    <h4> Shaded cloth with four sides pinned</h4>
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/cloth_pinned_4.PNG" width="480px" />
+        <figcaption align="middle">Cloth pinned at four corners</figcaption>
+      </tr>
+    </table>
+  </div>  
+<h2 align="middle">Part III: Handling collisions with other objects</h2>
+	<h3> Effect on cloth-sphere collision with change of ks. </h3>
+		<p> Similar to the reasoning above, the larger the ks, the greater the force the spring pulls on the masses its connected to. </p>
+	<h4> Collision of cloth and sphere. </h4>
+		<p>We can see from the images below that the smaller the spring constant, the more the cloth is wrapped around the sphere. </p>
+	<table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/sphere500.png" width="350px" />
+        <figcaption align="middle"> Cloth with ks: 500 <br> </figcaption>
+  
+        <td align="middle">
+        <img src="images/sphere5000.PNG" width="350px" />
+        <figcaption align="middle"> Cloth with ks: 5000</figcaption>
+
+        <td align="middle">
+        <img src="images/sphere50000.PNG" width="490px" />
+        <figcaption align="middle"> Cloth with ks: 50000</figcaption>
+      </tr>
+    </table>
+
+    <h4> Cloth resting on a plane. </h4>
+    <div align="center">
+	<table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/plane.PNG" width="350px" />
+        <figcaption align="middle"> Cloth lying on a plane. </figcaption>
+      </tr>
+    </table>
+ 	</div>
+<h2 align="middle">Part IV: Handling self-collisions</h2>
+	<p> For easier comparison, the following screenshots are taken at equal time intervals. </p>
+	<h4> Sequence of images of a cloth falling to a plane. (Focus on self colliding)</h4>
+
+	<table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/falling_1.PNG" width="350px" />
+        <figcaption align="middle"></figcaption>
+  
+        <td align="middle">
+        <img src="images/falling_2.PNG" width="460px" />
+        <figcaption align="middle"></figcaption>
+
+        <td align="middle">
+        <img src="images/falling_3.PNG" width="870px" />
+        <figcaption align="middle"> </figcaption>
+      </tr>
+    </table>
+
+    <h4> Sequence of images of a cloth with different density falling to a plane. (density: 100)</h4>
+    	<p> In comparison with the cloth above, the cloth has more ripples. </p>
+	<table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/falling_1_100.PNG" width="400px" />
+        <figcaption align="middle"> </figcaption>
+  		
+        <td align="middle">
+        <img src="images/falling_2_100.PNG" width="630px" />
+        <figcaption align="middle"> </figcaption>
+
+        <td align="middle">
+        <img src="images/falling_3_100.PNG" width="720px" />
+        <figcaption align="middle"> </figcaption>
+      </tr>
+    </table>
+
+    <h4> Sequence of images of a cloth with different spring constant falling to a plane. ks: 500)</h4>
+    <p> In comparision with the cloth in the first sequence, this cloth has less wrinkles</p>
+	<table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/falling_1_500.PNG" width="400px" />
+        <figcaption align="middle"> </figcaption>
+  		
+        <td align="middle">
+        <img src="images/falling_2_500.PNG" width="640px" />
+        <figcaption align="middle"> </figcaption>
+
+        <td align="middle">
+        <img src="images/falling_3_500.PNG" width="790px" />
+        <figcaption align="middle"> </figcaption>
+      </tr>
+    </table>
+</body>
+</html>

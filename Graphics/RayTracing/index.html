@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184 Ray Tracer, Part 1</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
+<h1 align="middle">Project 3-2: Ray Tracer, Part 2</h1>
+<h2 align="middle">Jennifer Wen Hsu, CS184-abn</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p> This project has four parts: </p>
+<h5> Part 1: Mirror and Glass Materials</h5>
+  <p> Implementing different bsdf according to whether the sphere is of mirror or glass material. The mirror sphere only has reflection while the glass material should have both reflection and refraction. </p>
+<h5> Part 2: Microfacet Material</h5>
+  <p> Implementing different microfacet materials. Different materials have different eta and k value. From changing the value of eta and k, we can render different materials. </p>
+
+<h5> Part 3: Environment Light</h5>
+  <p> Implement an infinite environment light. An environment light is a light that supplies incident radiance from all directions on the sphere. </p>
+
+<h5> Part 4: Depth of Field</h5>
+  <p> Placing the lens in front of the camera. And from changing the aperature and focus length, we can generate different focused images. </p>
+
+<h2 align="middle">Part 1: Mirror and Glass Materials</h2>
+
+  <div align="center">
+    <table style="width=100%">
+      <tr>
+
+        <td align="middle">
+        <img src="images/sphere_0.png" width="480px" />
+        <figcaption align="middle">Maximum Ray Depth = 0 <br> When rendering with maximum ray depth = 0, no light is reflecting back to the camera. <br> Hence, both spheres appear to be black.</figcaption>
+      </tr>
+      <tr>
+
+        <td align="middle">
+        <img src="images/sphere_1.png" width="480px" />
+        <figcaption align="middle">Maximum Ray Depth = 1 <br> We can see reflection off of both spheres after increasing maximum ray depth to 1. <br> The left sphere is made of glass while the right one is made of glass.</figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/sphere_2.png" width="480px" />
+        <figcaption align="middle">Maximum Ray Depth = 2 <br> Refracting can be seen from the glass sphere. <br> However, the glass ball still has a dark shadow because it's still missing one more light bounce. <br> Also, the reflection of the glass sphere on the mirror sphere is still dark. </figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/sphere_3.png" width="480px" />
+        <figcaption align="middle">Maximum Ray Depth = 3 <br> The glass sphere has a light highlight beneath the sphere. <br> The reflection of the glass sphere in the mirror sphere is showing up.  </figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/sphere_4.png" width="480px" />
+        <figcaption align="middle">Maximum Ray Depth = 4 <br> A bright spot can be seen on the right side of the wall. </figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/sphere_5.png" width="480px" />
+        <figcaption align="middle">Maximum Ray Depth = 5 <br>  Not much difference can be seen between Maximum Ray Depth 4 and 5.</figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/sphere_100.png" width="480px" />
+        <figcaption align="middle">Maximum Ray Depth = 100</figcaption>
+      </tr>
+    </table>
+  </div>
+
+<!--   <p>Here is an example of how to include a simple formula:</p>
+  <p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
+  <p>or, alternatively, you can include an SVG image of a LaTex formula.</p> -->
+
+<h2 align="middle">Part 2: Microfacet Material</h2>
+
+  <h4> Dragon Microfacet Au</h4>
+  <p> A sequence of 4 images of scene CBdragon_microfacet_au.dae rendered with alpha set to 0.005, 0.05, 0.25 and 0.5. Macro surface tends to be diffuse when alpha is large and glossy when alpha is small. As I increase the alpha value, the dragon gets more and more diffuse. </p>
+  <div align="center">
+    <table style="width=100%">
+      <tr>
+
+        <td align="middle">
+        <img src="images/dragon_microfacet_au_1.png" width="480px" />
+        <figcaption align="middle"> Rendered with alpha set to 0.005 <br> The dragon has a more shinny surface.</figcaption>
+      </tr>
+      <tr>
+
+        <td align="middle">
+        <img src="images/dragon_microfacet_au_2.png" width="480px" />
+        <figcaption align="middle"> Rendered with alpha set to 0.05</figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/dragon_microfacet_au_3.png" width="480px" />
+        <figcaption align="middle"> Rendered with alpha set to 0.25</figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/dragon_microfacet_au_4.png" width="480px" />
+        <figcaption align="middle"> Rendered with alpha set to 0.5. <br> The dragon has a more diffuse surface. </figcaption>
+      </tr>
+    </table>
+  </div>
+
+  <h4>Cosine Hemisphere Sampling and Importance Sampling</h4>
+  <p> Two images of CBbunny_microfacet_cu.dae rendered using cosine hemisphere sampling and importance sampling. Cosine Hemisphere Sampling is more inefficient but should provide the same result as importance sampling. </p>
+  <div align="center">
+    <table style="width=100%">
+      <tr>
+
+        <td align="middle">
+        <img src="images/bunny_microfacet_hemisphere.png" width="480px" />
+        <figcaption align="middle"> Uniform Sampling </figcaption>
+      </tr>
+      <tr>
+
+        <td align="middle">
+        <img src="images/bunny_cu_importance.png" width="480px" />
+        <figcaption align="middle"> Importance Sampling </figcaption>
+      </tr>
+    </table>
+  </div>
+
+  <h4> ANOTHER KIND OF MATERIAL - Magnesium</h4>
+   <div align="center">
+    <table style="width=100%">
+      <tr>
+
+        <td align="middle">
+        <img src="images/dragon_magnesium.png" width="480px" />
+        <figcaption align="middle"> Dragon rendered using Magnesium</figcaption>
+      </tr>
+    </table>
+  </div> 
+
+<h2 align="middle">Part 3: Environment Light</h2>
+<h4> Probabiliy Debug File</h4>
+  <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/probability_debug.png" width="480px" />
+        <figcaption align="middle"> probability_debug.png file generated.</figcaption>
+      </tr>
+      <tr>
+    </table>
+  </div>
+  <h4> Uniform Sampling and Importance Sampling with Unlit Bunny </h4>
+    <div align="center">
+    <p> There is more noise in Uniform Sampling than in Importance Sampling. In the uniform sampling scene, the eye of the bunny is more blury. </p>
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/this1.png" width="480px" />
+        <figcaption align="middle"> Uniform Sampling with Unlit Bunny</figcaption>
+      </tr>
+      <td align="middle">
+        <img src="images/bunny_unlit_importance.png" width="480px" />
+        <figcaption align="middle"> Importance Sampling with Unlit Bunny</figcaption>
+      </tr>
+      <tr>
+    </table>
+  </div>
+  <h4> Uniform Sampling and Importance Sampling with Microfacet Cu Bunny</h4>
+  <p> Same as the example above, there is more noise in Uniform Sampling than in Importance Sampling. It is more obvious to observe the shadow on the body. </p>
+    <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/this.png" width="480px" />
+        <figcaption align="middle"> Uniform Sampling with Microfacet Cu Bunny</figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/bunny_cu_importance_scene.png" width="480px" />
+        <figcaption align="middle"> Importance Sampling with Microfacet Unlit Bunny</figcaption>
+      </tr>
+    </table>
+  </div>
+<h2 align="middle">Part 4: Depth of Field</h2>
+<h5> Focus stack where the focus at 4 visibly different depths through the scene</h5>
+  <div align="center">
+    <table style="width=100%">
+      <tr>
+
+        <td align="middle">
+        <img src="images/focus_1.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.0625  Focus: 1.9 <br> The lens is focused at the head of the dragon. </figcaption>
+      </tr>
+      <tr>
+
+        <td align="middle">
+        <img src="images/focus_2.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.0625 Focus: 2.2<br> The lens is focused at the 2/4 distance from the head of the dragon</figcaption>
+      </tr>
+      <tr>
+
+        <td align="middle">
+        <img src="images/focus_3.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.0625 Focus: 2.5 <br> The lens is focused at the tail of the dragon. </figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/focus_4.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.0625 Focus: 2.8 <br> The lens is focused at behind the dragon.</figcaption>
+      </tr>
+    </table>
+  </div>
+  <h4> Changing the Aperature Size</h4>
+  <p> The size of the aperature decides the size of the FOV. When the aperature is 0, it's like there is no lens, and all parts of the images are as if they are in focus. The greater the aperature, the shorter the FOV. The following images are placed in increasing aperature size. In the last image, when aperature is at 0.5, the overall image is more blurry.  </p>
+    <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/aperature_1.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.022097     Focus: 1.9</figcaption>
+      </tr>
+      <tr>
+
+        <td align="middle">
+        <img src="images/aperature_2.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.0625     Focus: 1.9</figcaption>
+      </tr>
+      <tr>
+
+        <td align="middle">
+        <img src="images/aperature_3.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.17677     Focus: 1.9</figcaption>
+      </tr>
+      <tr>
+        <td align="middle">
+        <img src="images/aperature_4.png" width="480px" />
+        <figcaption align="middle"> Aperature: 0.5     Focus: 1.9</figcaption>
+      </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

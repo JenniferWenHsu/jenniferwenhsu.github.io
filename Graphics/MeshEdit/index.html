@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+
+  figure {
+    display: inline-block;
+    border: 1px dotted gray;
+    margin: 20px; /* adjust as needed */
+}
+figure img {
+    vertical-align: top;
+}
+figure figcaption {
+    text-align: center;
+    padding: 10px; 
+}
+</style>
+<title>CS 184 Mesh Editor</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
+<h1 align="middle">Project 2: Mesh Editor</h1>
+<h2 align="middle">Jennifer Hsu, CS184-abn</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>
+This project is primarily focused on working with 3D objects, from plotting the Bezier curves and surfaces (Section I) , to performing operations on meshes for upsampling (Section II) , and in the last part, applying shading effects to objects (Section III). Overall, I spent the most time on Part 6 (upsampling), but it's also the most interesting part of the whole project. It's interesting to know that pre-splitting or pre-flipping can sometimes make big differences in upsampled objects. Depending on whether you want to accentuate or smooth edges, you can perform different preprocessings to get the desired result. In terms of programming skills, I learned the importance of writing test cases to make sure each small chunk of code is correct before moving on. Part 6 was hard to debug in the sense that it was related to Part 4, and 5.  
+</p>
+
+<h2 align="middle">Section I: Bezier Curves and Surfaces</h2>
+
+<h3 align="middle">Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
+
+<p> The de Casteijau's algorithm takes two adjacent vertices and return a midpoint according to a ratio \(t:(1-t)\). I then store all of the intermediate control points into a 2D vector, with each level being the result of one iteration.  
+</p>
+<p> The following shows the iterative process of performing de Casteijau's algorithm. In Figure 1-7, the curve is drawn in green. Bezier curves make it easy to modify the shape of the curve through control points and ratio. Figure 1-8 is an example of moving the second control point from the left to a new position and altering the ratio so that \( t\) is smaller. 
+</p>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <figure> 
+        <img src="images/beize1.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-1 <br> Original 6 points.</figcaption>
+        </figure>
+      </td>
+      <td>
+        <figure>
+        <img src="images/beize2.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-2 <br> 1st Iteration.</figcaption>
+        </figure>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <figure>
+        <img src="images/beize3.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-3 <br> 2nd Iteration.</figcaption>
+        </figure>
+      </td>
+      <td>
+        <figure>
+        <img src="images/beize4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-4 <br> 3rd Iteration.</figcaption>
+        </figure>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <figure>
+        <img src="images/beize5.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-5 <br> 4th Iteration.</figcaption>
+        </figure>
+      </td>
+      <td>
+        <figure>
+        <img src="images/beize6.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-6 <br> 5th Iteration.</figcaption>
+        </figure>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <figure>
+        <img src="images/beize7.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-7 <br> Drawing the curve.</figcaption>
+        </figure>
+      </td>
+      <td>
+        <figure>
+        <img src="images/beize8.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 1-8 <br> Modifications made <br> to the position of the points and the ratio t.</figcaption>
+        </figure>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<p> Debugging journey: <br> At first, I was grouping the points two by two with no overlapping. The bug was easy to catch once I step through each iteration and realize it's missing some of the midpoints. 
+</p>
+
+<br> <br> 
+<h3 align="middle">Part 2: Bezier surfaces with separable 1D de Casteljau subdivision</h3>
+
+<p> Given a 2D array of points, to perform de Casteljau's algorithm to Bezier surface, first perform de Casteljau's algorithm to each row. Each row will be reduced to contain only one point. Once the column of points is obtained, perform de Casteljau's algorithm again to get one point. 
+</p>
+
+<p> In order to make calculation simplier. I first implemented a function that returns a point from a vector of points using the de Casteljau's algorithm. I then take the 2D array of points and apply each row to the 1D function. 
+</p>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <figure>
+        <img src="images/teapot.png" align="middle" width="600px"/>
+        <figcaption align="middle">Figure 2-1 <br> Teapot rendered from beizer surface.</figcaption>
+        </figure>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<br> <br> 
+<h2 align="middle">Section II: Sampling</h2>
+
+<h3 align="middle">Part 3: Average normals for half-edge meshes</h3>
+<p> The idea is to sum the normal vectors of the surrounding areas and then normalize the resulting vector. 
+</p>
+
+<p> The most important part when implementing this section is to make sure to traverse through all the faces surrounding a vertex. A carefully thought while loop is able to achieve this. Once the summation of all the normal vectors from surrounding is achieved, the last step is to make sure the resulting normal vector is normalized. </p>
+
+<p> In the end, it creates a more "continuous" surface. </p>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/part3_1.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Figure 3-1 <br> Before normalizing.</figcaption>
+        </figure>
+    </tr>
+    <br>
+    <tr>
+        <figure>
+        <img src="images/part3_2.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Figure 3-2 <br> After normalizing.</figcaption>
+        </figure>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 4: Half-edge flip</h3>
+
+<p> Flipping an edge in a mesh is considered one of the elementary operations. </p>
+<p> There are two steps to this part. The first step is to declare variables of the original mesh. This includes vertices, edges, halfedges, and faces. The second step is to reassign the old elements (verties, edges, halfedges, and faces) found in the first step to new locations according to the result of flipping. 
+</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/part3_2.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Before flipping.</figcaption>
+        </figure>
+    </tr>
+    <br>
+    <tr>
+        <figure>
+        <img src="images/flip.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Flipped the middle 4 meshes.</figcaption>
+        </figure>
+    </tr>
+  </table>
+</div>
+
+<p>Debugging journey: The surrounding edges of the meshes are the most tricky. It took me awhile to debug because I originally thought the faces that the outside halfedges point to are also within the current mesh. It was fairly simple to implement after I figure out that halfedges on the outside are not changed after the flip. 
+</p>
+
+<br> <br> 
+<h3 align="middle">Part 5: Half-edge split</h3>
+<p> Implementation of this part is pretty similar to Part 4. The main difference is the allocation of new elements in the first step. This is because there are more halfedges, edges, vertices, and faces after splitting. 
+</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/part3_2.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Figure 5-1 <br> Before Splitting.</figcaption>
+        </figure>
+    </tr>
+    <br>
+    <tr>
+        <figure>
+        <img src="images/flip.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Figure 5-2 <br> Splitted the middle 4 meshes.</figcaption>
+        </figure>
+    </tr>
+    <br>
+    <tr>
+        <figure>
+        <img src="images/flip.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Figure 5-2 <br> Splitted and flipped meshes in the middle of the teapot.</figcaption>
+        </figure>
+    </tr>    
+  </table>
+</div>
+
+<p>Debugging journey: <br> I was able to perform split operations after implementing the procedure mentioned above. However, I came back to this section after realizing that I need a way to track old or new vertices and edges when working on part 6 (upsampling). I then added three more lines of code. One for setting the isNew attribute for the newly created vertex to true, and two for setting two newly created edges' isNew attribute to true. 
+
+</p>
+
+<br> <br> 
+<h3 align="middle">Part 6: Loop subdivision for mesh upsampling</h3>
+<p>
+  There are five steps in performing loop subdivision.
+  <br> <br> Part 1. Iterate through all the vertices and set the vertices isNew attribute to false to specifiy these as the original vertices. Calculate the new position for these vertices after upsampling and store the value in the vertex's newPostion attribute. 
+  <br> <br> Part 2. Iterate through all the edges and set the edges isNew attribute to false to spcify these are the original edges. Next, calculate the position value for the new vertex resulted from splitting a mesh and store it in edge's newPosition attribute. This position will be used later in Part 3. 
+
+  <br><br> Part 3. Split every edge in the mesh. The splitEdge function returns a VertexIter type. We can set the newPosition attribute of this VertexIter type to the edge's newPosition obtained from part 2. 
+
+  <br><br> Part 4. Flip edges that are connected to an old edge and a new edge. The trickest part is to make sure that we are not flipping edges that are on the original edge even though technically these newly splitted edges are also in between an old and new edge. 
+
+  <br><br> Part 5. Iterate through all the vertices and assign newPosition to position.
+
+</p>
+
+<h3> Upsampling cube.dae </h3>
+<p> After several iteration of upsampling, the sharp corners and edges causes the object to sample assymetric. (Figure 6-4) The upsampled object has "bumps" at positions where there were originally sharp and edges. </p>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/cube1.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-1 <br> Before upsampling.</figcaption>
+        </figure>
+    </tr>
+    <tr>
+        <figure>
+        <img src="images/cube2.PNG" align="middle" width="375px"/>
+        <figcaption align="middle">Figure 6-2 <br> Upsampling 1 time.</figcaption>
+        </figure>
+    </tr>
+    <tr>
+        <figure>
+        <img src="images/cube3.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-3 <br> Upsampling 2 times. </figcaption>
+        </figure>
+    </tr>    
+    <tr>
+        <figure>
+        <img src="images/cube4.PNG" align="middle" width="380px"/>
+        <figcaption align="middle">Figure 6-4 <br> Upsampling 3 times.</figcaption>
+        </figure>
+    </tr> 
+  </table>
+</div>
+<h3> Upsampling cube.dae along with pre-splitting. </h3>
+<p> In orer to smooth out the "bumps" mentioned above, we can try to lessen the effect by pre-splitting some of the edges. </p>
+
+<p> If I try to split each face of the cube before upsampling, then the object after four upsampling has smoother edges and corners. The result is also more symmetric than the one above. By splitting some of the meshes, the upsampling process will calcualte more sample points and hence produce a more symmetric object. </p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/splitCube1.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-5 <br> Before upsampling.</figcaption>
+        </figure>
+    </tr>
+    <tr>
+        <figure>
+        <img src="images/splitCube2.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-6 <br> Upsampling 1 time.</figcaption>
+        </figure>
+    </tr>
+    <tr>
+        <figure>
+        <img src="images/splitCube3.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-7 <br> Upsampling 2 times. </figcaption>
+        </figure>
+    </tr>    
+    <tr>
+        <figure>
+        <img src="images/splitCube4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-8 <br> Upsampling 3 times.</figcaption>
+        </figure>
+    </tr> 
+  </table>
+</div>
+
+<h3> A couple more upsampling examples</h3>
+<h3> Teapot </h3>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/teapotupsampling1.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-9 <br> Before upsampling.</figcaption>
+        </figure>
+    </tr>
+    <tr>
+        <figure>
+        <img src="images/teapotupsampling2.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-10 <br> Upsampling 1 time.</figcaption>
+        </figure>
+    </tr>
+    <tr>
+        <figure>
+        <img src="images/teapotupsampling3.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-11 <br> Upsampling 2 times. </figcaption>
+        </figure>
+    </tr>    
+
+  </table>
+</div>
+
+<h3> Cute Cow </h3>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/cow1.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-12<br> Before upsampling.</figcaption>
+        </figure>
+    </tr>
+    <tr>
+        <figure>
+        <img src="images/cow2.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Figure 6-13 <br> Upsampling 1 time.</figcaption>
+        </figure>
+    </tr>
+  </table>
+</div>
+<p> Note: The meshes are pretty detailed after just 1 upsampling iteration. </p>
+
+<p> Debuggin Journey: Debugging part 6 took me the greatest amount of time. In the beginning, I was having trouble with getting the correct connection. I fixed that by moving the messy code to update isNew attributes for vertices and edges from the upsampling function to the split function. Doing so proved to be more simpler, since I don't need to perform tricky edge tracking while loops. This solved the connection problem. I didn' realize taht Iw as still having problem until I ran upsampling on the cube, where I started to see some points never got updated to the new position. At first I was suspecting there was something wrong with my flipping and splitting function so I spent a lot of time double, triple and quaduple checking that the pointers are pointing to the right places. I end up using print statements to print the updated positions and finally found out after hours of debugging that I had declare the variable  u as an int. This was the reason that the positions of some vertices weren't updating correctly. Once I fix this, everything works perfectly. </p>
+
+<br> <br> 
+<h2 align="middle">Section III: Shaders</h2>
+<h3 align="middle">Part 7: Fun with shaders</h3>
+<p> This section uses a shading language called the GLSL.</p>
+
+<p> The calculation process was fairly simple after getting familiar with the slightly different syntax in GLSL. </p>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/orangeTeapot.PNG" align="middle" width="600px"/>
+        <figcaption align="middle">Figure 7-1. <br> Shading of a teapot to give it a shinny ceramic touch. </figcaption>
+        </figure>
+
+  </table>
+</div>
+
+</body>
+</html>
