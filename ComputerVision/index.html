@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184 Ray Tracer, Part 1</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+<body>
+
+<h1 align="middle">Mini-Project: Live Sketch Application</h1>
+
+<h2 align="middle">Jennifer Hsu</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+Creating sketch like video live-feeding from the webcam.
+The project is broken down into four sections. 
+<h3> Part I: Convert image to grayscale</h3>
+<h3> Part II: Blur the image</h3>
+<h3> Part III: Extract Edges</h3>
+<h3> Part IV: Invert binarization of the image</h3> 
+</div>
+
+<h2> Part I: Convert image to grayscale</h2>
+  Since our final purpose is to create sketch like images, we can extract only the important imformation reduce the complexity of an image. Information is stored in 3D for an colored image (values for Red, Green, and Blue) while a gray scale image requires only 1D. 
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/original.png" align="middle" width="600px"/>
+        <figcaption align="middle">Original Image</figcaption>
+        </figure>
+    </tr>
+    <br>
+    <tr>
+        <figure>
+        <img src="images/grayscale.png" align="middle" width="600px"/>
+        <figcaption align="middle">Gray scale image</figcaption>
+        </figure>
+    </tr>
+  </table>
+</div>
+
+<h2> Part II: Blur the image</h2>
+  To get the contours of an image, it is best to first get rid of noises in the image. This is achieved by blurring the gray scaled image. 
+
+  In OpenCV, there are 4 blurring methods (or smoothing according to OpenCV documendation): blur, GaussianBlur, medianBlur, and bilateralFilter. 
+  The effects of the four methods are shown below. 
+  <div align="middle">
+  <table style="width=100%">
+    <tr>
+        <figure>
+        <img src="images/grayscale.png" align="middle" width="600px"/>
+        <figcaption align="middle">Original clear grayscale image</figcaption>
+        </figure>
+    </tr>
+    <tr> 
+        <figure>
+        <img src="images/normalizedBlur.png" align="middle" width="600px"/>
+        <figcaption align="middle">Normalized Blur with kernel size 9x9</figcaption>
+        </figure>
+    </tr>
+    <tr> 
+        <figure>
+        <img src="images/gaussianBlur.png" align="middle" width="600px"/>
+        <figcaption align="middle">Gaussian Blur with kernel size 9x9</figcaption>
+        </figure> 
+    </tr> 
+    <tr>
+        <figure>
+        <img src="images/medianBlur.png" align="middle" width="600px"/>
+        <figcaption align="middle">Median Blur with aperature linear size 9</figcaption>
+        </figure> 
+    </tr> 
+  </table>
+</div>  
+If you look at the words around the camera lens, only Gaussian blur seems readable. If we want to make a sketch like image in the end, it is better if we can still read the details clearly, hence, let's choose Gaussian blur for the rest of the project. 
+
+
+<div align="middle">
+</div>  
+<h2> Part III: Extract Edges</h2>
+<h2> Part IV: Invert Binarization of the Image</h2> 
+</body>
+</html>
